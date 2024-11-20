@@ -87,7 +87,7 @@
    - Commit file `requirements.txt`.
 
 3. **Liên hệ hỗ trợ**:
-   - Nếu gặp vấn đề, vui lòng liên hệ nhóm trưởng **Hữu Thắng** hoặc các thành viên khác để được hỗ trợ.
+   - Nếu gặp vấn đề, vui lòng liên hệ **Hữu Thắng** hoặc các thành viên khác để được hỗ trợ.
 
 ---
 

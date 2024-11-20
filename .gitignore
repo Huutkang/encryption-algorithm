@@ -1,0 +1,8 @@
+# Bỏ qua file tạm thời và thư mục môi trường ảo
+venv/
+__pycache__/
+*.pyc
+
+# Bỏ qua các file cấu hình hệ thống IDE/Editor
+*.vscode/
+.idea/

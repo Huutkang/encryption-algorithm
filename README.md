@@ -1,4 +1,3 @@
-
 # Tìm hiểu và mô phỏng một số giải thuật mã hóa
 
 Đây là dự án môn **Cấu trúc dữ liệu và giải thuật**, tập trung vào việc tìm hiểu và mô phỏng các giải thuật mã hóa phổ biến. Dự án nhằm cung cấp kiến thức cơ bản về mã hóa dữ liệu, áp dụng thực tế vào các bài toán bảo mật thông tin.
@@ -34,7 +33,7 @@
    ```bash
    git clone https://github.com/Huutkang/encryption-algorithm.git
    cd encryption-algorithm
-   ````
+   ```
 
 2. **Để sau viết tiếp**:
 
@@ -42,22 +41,23 @@
 
 ## Quy tắc làm việc nhóm
 
-1. **Làm việc trên nhánh cá nhân**:
-   - Mỗi thành viên làm việc trên nhánh riêng của mình (an, dai, phuc, phuoc, thang).
-    ```bash
-     git branch -M <tên_nhánh cá nhân>
-     ```
+1. **Quản lý nhánh làm việc**:
+   - Mỗi thành viên nên làm việc trên nhánh riêng của mình:
+     - An, Đại, Thắng, Phúc, Phước: `an`, `dai`, `phuc`, `phuoc`, `thang`.
+   - Đối với file Word hoặc PowerPoint, sử dụng nhánh chung:
+     - **Word**: `word`.
+     - **PowerPoint**: `pp`.
+   - Các thành viên có nhiều công việc (Phúc và Phước) sẽ làm mã nguồn trên nhánh cá nhân (`phuc`, `phuoc`) và các tài liệu trên nhánh chung (`word`, `pp`). hoặc thích thì tạo thêm nhánh `phuc_word`, `phuoc_pp` nếu thích.
 
 2. **Luôn pull mã nguồn trước khi bắt đầu**:
    - Đảm bảo mã nguồn được cập nhật từ nhánh `main`:
      ```bash
      git pull origin main
      ```
-    - Nếu bạn muốn pull nhánh từ thành viên khác:
+   - Nếu bạn muốn pull nhánh từ thành viên khác:
      ```bash
      git pull origin <tên_nhánh>
      ```
-    
 
 3. **Commit rõ ràng**:
    - Commit cần có thông điệp mô tả chi tiết:
@@ -66,7 +66,7 @@
      ```
 
 4. **Yêu cầu hợp nhất mã nguồn (Pull Request)**:
-   - Sau khi hoàn thành công việc, gửi Pull Request từ nhánh cá nhân để được xem xét.
+   - Sau khi hoàn thành công việc, gửi Pull Request từ nhánh cá nhân hoặc nhánh chung để được xem xét.
 
 5. **Kiểm tra kỹ trước khi hợp nhất**:
    - Đảm bảo mã nguồn không có lỗi và đã được kiểm tra kỹ trước khi gửi yêu cầu hợp nhất.

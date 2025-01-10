@@ -24,6 +24,7 @@ def main():
     key = ""
     ciphertext = ""
     plaintext_decrypt = ""
+    error_message = ""  # Biến lưu thông báo lỗi
     visual_steps = []
     current_step = 0
     encryption_complete = False
@@ -107,7 +108,9 @@ def main():
             label_decrypted_plaintext,
             (decrypt_plaintext_rect.x, decrypt_plaintext_rect.y - 25),
         )
-
+        if error_message:
+            error_text = font.render(error_message, True, (255, 0, 0))
+            screen.blit(error_text, (50, 400))
         # Draw buttons
         if not decryption_mode:
             mouse_pos = pygame.mouse.get_pos()
@@ -173,7 +176,9 @@ def main():
                 elif encode_button_rect.collidepoint(
                     event.pos
                 ) or decode_button_rect.collidepoint(event.pos):
-                    if plaintext and key:
+                    if len(key) != 16:
+                        error_message = "Key must be 16 characters long (128-bit key required)"
+                    elif plaintext and key:
                         if not decryption_mode:
                             ciphertext, visual_steps = aes_encrypt_stepwise(plaintext, key)
                             encryption_complete = False
@@ -181,8 +186,9 @@ def main():
                             plaintext_decrypt, visual_steps = aes_decrypt_stepwise(ciphertext, key)
                             decryption_complete = False
                         current_step = 0
+                        error_message = ""
                     else:
-                        ciphertext = "Error: Provide valid input and key."
+                        error_message = "Error: Provide valid input and key."
                 elif reset_button_rect.collidepoint(event.pos):
                     plaintext = ""
                     key = ""
@@ -193,6 +199,7 @@ def main():
                     encryption_complete = False
                     decryption_mode = False  # Reset chế độ về mã hóa
                     decryption_complete = False
+                    error_message = ""  # Reset thông báo lỗi
                 elif exit_button_rect.collidepoint(event.pos):
                     running = False  # Thoát vòng lặp chính
                     pygame.quit()     # Kết thúc pygame
@@ -206,7 +213,7 @@ def main():
                             decryption_mode = True
                         else:
                             decryption_complete = True
-                        #   # Chuyển sang chế độ giải mã         
+                        #   # Chuyển sang chế độ giải mã
                 elif back_button_rect.collidepoint(event.pos) and current_step > 0:
                     # Go back to the previous step
                     current_step -= 1

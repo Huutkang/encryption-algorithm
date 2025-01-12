@@ -125,30 +125,41 @@ class SimulateRSA:
                 self.input_text=SimulateRSA.replace_char_at_index(self.input_text,len(self.input_text)-self.d, self.ss)
                 self.d=0
     
+    def setStep(self, arr, step):
+        for i in arr[3:]:
+            i.step=step
+    
     def move (self):
         for i in self.value:
             a=i[3].move()
             b=i[4].move()
             c=i[5].move()
+            vt=self.ds.getCoordinates()
             if a:
                 if (i[3].step==1):
-                    i[3].step=2
-                    i[3].setMove(self.ds.getCoordinates(), 3)
-                    self.ds.append(i[0], str(i[2]))
+                    self.setStep(i, 2)
+                    i[3].setMove(vt, 3)
                     i[5].xy = [353, 241]
                     i[5].setMove((357, 374), 3)
                     i[5].on = True
-                    i[5].step=3
+                    self.setStep(i, 3)
             if c:
                 if (i[5].step==3):
                     i[5].on = False
-                    i[4].step=4
-                    i[5].step=4
-                    td = self.ds.getCoordinates()
+                    self.setStep(i, 4)
                     i[4].xy = [266, 398]
-                    i[4].setMove((td[0]+50, td[1]+8), 3)
+                    i[4].setMove((vt[0]+50, vt[1]+8), 3)
+                    self.ds.append(i[0], str(i[2]))
                     i[4].on = True
-
+            if b and c:
+                if (i[5].step==4):
+                    self.setStep(i, 5)
+                    i[3].on = False
+                    i[4].on = False
+                    self.ds.unlock()
+                    
+                    
+                
     def update (self):
         for i in self.value:
             if i[3].on:

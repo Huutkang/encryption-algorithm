@@ -6,7 +6,7 @@ class Unicode (Obj):
     
     def __init__(self):
         super().__init__(180, 60)
-        self.xy = [266, 200]
+        self.xy = [266, 270]
     
     def update(self):
         text = self.font5.render("Unicode", True, "black")

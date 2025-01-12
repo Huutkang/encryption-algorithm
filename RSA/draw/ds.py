@@ -26,8 +26,9 @@ class Ds (Obj):
         self.lock_display = True
     
     def pop(self):
-        self.backward()
-        return self.dq.popleft()
+        r = self.dq.popleft()
+        self.forward()
+        return r
     
     def getQuantity(self):
         return len(self.dq)

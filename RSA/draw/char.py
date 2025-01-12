@@ -5,7 +5,7 @@ from .obj import Obj
 class Char (Obj):
     
     def __init__(self, char, xy=None, type=None):
-        super().__init__(30, 30, [30, 94])
+        super().__init__(30, 30, [30, 124])
         self.char = char
         if xy is not None:
             self.xy = [xy[0], xy[1]]

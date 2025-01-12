@@ -6,7 +6,7 @@ class Button (Obj):
     
     def __init__(self):
         super().__init__(60, 40)
-        self.xy = [600, 90]
+        self.xy = [600, 120]
     
     
     def update(self):

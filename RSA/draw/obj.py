@@ -72,8 +72,8 @@ class Obj:
             self.xy[1] += self.step_y
             return False
 
-    def updateStep(self):
-        pass
+    def setCoordinates(self, x, y):
+        self.xy = [x, y]
     
     def update(self, xy, input=None):
         pass

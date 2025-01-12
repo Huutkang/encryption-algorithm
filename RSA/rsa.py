@@ -8,7 +8,7 @@ class RSA(object):
     Lớp đại diện cho thuật toán RSA
     """
 
-    def __init__(self, keysize=128):
+    def __init__(self, keysize=64):
         self.keysize = keysize
         self.snt = PrimeNumberUtils()
         self.generateKeys(self.keysize)

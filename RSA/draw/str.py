@@ -6,14 +6,15 @@ class String (Obj):
     
     bgrcl = [20, 20, 20]
     
-    def __init__(self, string, bgrcl = None, xy=None, value=None):
+    def __init__(self, string, bgrcl = None, xy=None, type=None):
         l = len(string)
-        super().__init__(30*l, 30, value=value)
+        super().__init__(int(9.4*l)+10, 18)
         self.string = string
         if bgrcl is not None:
             self.bgrcl = bgrcl
         if xy is not None:
             self.xy = [xy[0], xy[1]]
+        self.type = type
     
     def update(self, xy=None):
         if xy is not None:

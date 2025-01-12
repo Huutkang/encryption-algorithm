@@ -5,8 +5,8 @@ class Obj:
     target = None
     step_x = 0
     step_y = 0
-
-    def __init__(self, x, y, xy=[0, 0], value=None):
+    
+    def __init__(self, x, y, xy=[0, 0]):
         self.surface = pygame.Surface((x, y), pygame.SRCALPHA)
         self.width = x
         self.height = y
@@ -17,10 +17,8 @@ class Obj:
         self.font5 = pygame.font.SysFont("Calibri", 50)
         self.font6 = pygame.font.SysFont("Calibri", 36)
         self.xy = xy
-        if value is not None:
-            self.values = value
-        else:
-            self.values = []
+        self.on = False
+        self.step = 1
 
     def checkInObj(self, pos):
         if pos[0] < self.xy[0] or pos[0] > self.xy[0] + self.width:
@@ -74,5 +72,8 @@ class Obj:
             self.xy[1] += self.step_y
             return False
 
+    def updateStep(self):
+        pass
+    
     def update(self, xy, input=None):
         pass

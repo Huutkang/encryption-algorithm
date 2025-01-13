@@ -1,6 +1,6 @@
 import pygame
 import sys
-from AES.aes import aes_encrypt_stepwise,aes_decrypt_stepwise
+from aes import aes_encrypt_stepwise,aes_decrypt_stepwise
 
 def main():
     pygame.init()

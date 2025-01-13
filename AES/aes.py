@@ -1,4 +1,4 @@
-from AES.constant import S_BOX, RCON, INV_S_BOX
+from constant import S_BOX, RCON, INV_S_BOX
 
 def to_matrix(data):
     return [[data[i * 4 + j] for j in range(4)] for i in range(4)]
@@ -242,6 +242,7 @@ def aes_encrypt_stepwise(plaintext, key):
     except Exception as e:
         return f"Error: {e}"
 
+
 def aes_decrypt_stepwise(ciphertext, key):
     global visual_steps
     try:
@@ -277,66 +278,18 @@ def aes_decrypt_stepwise(ciphertext, key):
                 )
             )
 
-            # Bắt đầu vòng lặp giải mã
-            state = ciphertext_matrix
-
-            # AddRoundKey với khóa của vòng cuối
-            previous_state = state
-            state = add_round_key(state, round_keys[10])
+            # AddRoundKey với khóa của vòng cuối (ban đầu)
+            state = add_round_key(ciphertext_matrix, round_keys[10])
             visual_steps.append(
                 (
-                    f"Block {block_index + 1}: AddRoundKey (Final Round)",
-                    previous_state,
+                    f"Block {block_index + 1}: AddRoundKey (Initial Round)",
+                    ciphertext_matrix,
                     state,
                 )
             )
 
-            # Inverse ShiftRows
-            previous_state = state
-            state = inverse_shift_rows(state)
-            visual_steps.append(
-                (
-                    f"Block {block_index + 1}: Final Round Inverse ShiftRows",
-                    previous_state,
-                    state,
-                )
-            )
-
-            # Inverse SubBytes
-            previous_state = state
-            state = inverse_sub_bytes(state)
-            visual_steps.append(
-                (
-                    f"Block {block_index + 1}: Final Round Inverse SubBytes",
-                    previous_state,
-                    state,
-                )
-            )
-
-            # 9 vòng lặp trung gian
+            # 9 vòng lặp (từ vòng 9 đến vòng 1)
             for round_num in range(9, 0, -1):
-                # AddRoundKey
-                previous_state = state
-                state = add_round_key(state, round_keys[round_num])
-                visual_steps.append(
-                    (
-                        f"Block {block_index + 1}: Round {round_num} AddRoundKey",
-                        previous_state,
-                        state,
-                    )
-                )
-
-                # Inverse MixColumns
-                previous_state = state
-                state = inverse_mix_columns(state)
-                visual_steps.append(
-                    (
-                        f"Block {block_index + 1}: Round {round_num} Inverse MixColumns",
-                        previous_state,
-                        state,
-                    )
-                )
-
                 # Inverse ShiftRows
                 previous_state = state
                 state = inverse_shift_rows(state)
@@ -359,12 +312,57 @@ def aes_decrypt_stepwise(ciphertext, key):
                     )
                 )
 
-            # AddRoundKey với khóa của vòng đầu
+                # AddRoundKey
+                previous_state = state
+                state = add_round_key(state, round_keys[round_num])
+                visual_steps.append(
+                    (
+                        f"Block {block_index + 1}: Round {round_num} AddRoundKey",
+                        previous_state,
+                        state,
+                    )
+                )
+
+                # Inverse MixColumns
+                previous_state = state
+                state = inverse_mix_columns(state)
+                visual_steps.append(
+                    (
+                        f"Block {block_index + 1}: Round {round_num} Inverse MixColumns",
+                        previous_state,
+                        state,
+                    )
+                )
+
+            # Vòng cuối cùng (vòng 0, không có Inverse MixColumns)
+            # Inverse ShiftRows
+            previous_state = state
+            state = inverse_shift_rows(state)
+            visual_steps.append(
+                (
+                    f"Block {block_index + 1}: Final Round Inverse ShiftRows",
+                    previous_state,
+                    state,
+                )
+            )
+
+            # Inverse SubBytes
+            previous_state = state
+            state = inverse_sub_bytes(state)
+            visual_steps.append(
+                (
+                    f"Block {block_index + 1}: Final Round Inverse SubBytes",
+                    previous_state,
+                    state,
+                )
+            )
+
+            # AddRoundKey
             previous_state = state
             state = add_round_key(state, round_keys[0])
             visual_steps.append(
                 (
-                    f"Block {block_index + 1}: AddRoundKey (Initial)",
+                    f"Block {block_index + 1}: Final Round AddRoundKey",
                     previous_state,
                     state,
                 )

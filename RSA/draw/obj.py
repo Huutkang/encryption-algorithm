@@ -11,7 +11,7 @@ class Obj:
         self.width = x
         self.height = y
         self.font1 = pygame.font.SysFont("Calibri", 28)
-        self.font2 = pygame.font.SysFont("Cascadia Mono SemiBold", 50)
+        self.font2 = pygame.font.SysFont("Calibri", 30, bold=True)
         self.font3 = pygame.font.SysFont("Calibri", 18)
         self.font4 = pygame.font.SysFont("Calibri", 100)
         self.font5 = pygame.font.SysFont("Calibri", 50)

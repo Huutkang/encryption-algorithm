@@ -4,7 +4,7 @@ import random
 class PrimeNumberUtils:
     '''class PrimeNumberUtils xử lí công việc liên quan đến số nguyên tố'''
     
-    def __init__(self, path="primes.txt"):
+    def __init__(self, path="RSA/primes.txt"):
         self.lowPrimes = self.readPrimesFromFile(path)
     
     @staticmethod
@@ -43,7 +43,7 @@ class PrimeNumberUtils:
         PrimeNumberUtils.writePrimesToFile(primes, path)
         print("Đã ghi n số nguyên tố đầu tiên vào file primes.txt!")
 
-    def readPrimesFromFile(self, path="primes.txt"):
+    def readPrimesFromFile(self, path="RSA/primes.txt"):
         """Đọc danh sách số nguyên tố từ file."""
         with open(path, "r") as file:
             primes = [int(line.strip()) for line in file]

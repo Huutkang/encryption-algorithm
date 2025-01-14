@@ -19,6 +19,6 @@ class Char (Obj):
         else:
             text = self.font2.render(self.char, True, "black")
         pygame.draw.rect(self.surface, "green", [0, 0, self.width, self.height], border_radius=int(min(self.width, self.height)/10))
-        self.surface.blit(text, (4, 0))
+        self.surface.blit(text, (4, 1))
         return [self.surface, (self.xy[0], self.xy[1])]
     

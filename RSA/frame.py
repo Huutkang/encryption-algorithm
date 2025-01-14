@@ -22,7 +22,7 @@ class SimulateRSA:
     # các biến cho gõ văn bản
     x = False 
     input_active = True
-    input_text=''
+    input_text='64'
     d=0
     t2=0
     ss=''
@@ -32,47 +32,30 @@ class SimulateRSA:
     def __init__(self):
         # Khởi tạo Pygame
         pygame.init()
-        self.rsa = RSA()
+        self.rsa = RSA(test=True)
         self.truyen_kieu = TruyenKieu()
-        self.font = pygame.font.SysFont("Calibri", 30)
+        self.font = pygame.font.SysFont("Calibri", 20)
         self.screen = pygame.display.set_mode((self.dis_width, self.dis_height))
         pygame.display.set_caption("RSA")
 
         # Tạo đồng hồ để kiểm soát FPS
         self.clock = pygame.time.Clock()
-        
         self.value = []
-        
         self.ip = Input(512, 40)
+        self.keysize = Input(80, 35)
         self.out = Output(512, 40)
-        
         self.cme = Cme()
         self.mcd = Mcd()
         self.unicode = Unicode()
-        
-        # self.rsa.N = 179711192233038506470283982207179351179
-        # self.rsa.d = 151225911394725810029362326109652907603
-        # self.rsa.e = 11964885223040611691
-        
-        self.rsa.N = self.rsa.N
-        self.rsa.d = self.rsa.d
-        self.rsa.e = self.rsa.e
-        
         self.tex_out = ""
-        
         self.bd = False
-        
         self.button = Button()
-        
         self.ds = Ds()
-        
         self.index_prepare = 0
         self.t_go = 0
-        
-        self.type = "auto" # "encode" # decode, key
-        
+        self.type = "key" # encode, decode, key, auto
         self.auto = "input"
-        
+        self.stepkey = 0
         
     def go(self):
         a = self.button.checkInObj(self.pos)
@@ -118,15 +101,21 @@ class SimulateRSA:
         
     def drawString(self):
         text = self.font.render("d: "+str(self.rsa.d), True, "orange")
-        self.screen.blit(text, (10, 40))
-        text = self.font.render("N: "+str(self.rsa.N), True, "orange")
-        self.screen.blit(text, (10, 5))
+        self.screen.blit(text, (10, 27))
+        text = self.font.render("n: "+str(self.rsa.N), True, "orange")
+        self.screen.blit(text, (10, 4))
         text = self.font.render("e: "+str(self.rsa.e), True, "orange")
-        self.screen.blit(text, (700, 10))
+        self.screen.blit(text, (10, 50))
     
     def draw(self, obj):
         self.screen.blit(obj[0], obj[1])
     
+    
+    def isNumber(self, char):
+        if len(char) == 1 and char.isdigit():
+            return True
+        return False
+
     def is_valid_character(self, char):
         special_characters = r"""`~!@#$%^&*()-_=+[{]}\\|;:'",<.>/? """
         pattern = (
@@ -148,20 +137,28 @@ class SimulateRSA:
                     self.type = "auto"
                     self.initEncode()
                     self.auto = "input"
-                if event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN:
                     self.type = "encode"
                     self.initEncode()
-                if event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT:
                     if self.type == "encode":
                         self.type = "decode"
                         self.initDecode()
-                if event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT:
                     if self.type == "decode":
                         self.type = "encode"
                         self.initEncode()
-                if event.key == pygame.K_RETURN:
-                    self.bd = True
-                    self.initStr()
+                elif event.key == pygame.K_RETURN:
+                    if self.type == "key":
+                        self.eventCreateKey()
+                    else:
+                        self.bd = True
+                        self.initStr()
+                elif event.key == pygame.K_y:
+                    self.yesNo(True)
+                elif event.key == pygame.K_n:
+                    self.yesNo(False)
+                
             # Xử lý nhập bàn phím
             if event.type == pygame.KEYDOWN and self.input_active:
                 t1 = time.time()
@@ -179,7 +176,10 @@ class SimulateRSA:
                 else:
                     if len(self.input_text)<35:
                         if self.is_valid_character(event.unicode):
-                            self.input_text += event.unicode  # Thêm ký tự Unicode 
+                            if self.type == "encode":
+                                self.input_text += event.unicode  # Thêm ký tự Unicode
+                            elif self.isNumber(event.unicode)  and self.type == "key" and len(self.input_text)<4:
+                                self.input_text += event.unicode
         if self.x:
             if (time.time()-self.t2>0.02):
                 self.x=False
@@ -240,8 +240,7 @@ class SimulateRSA:
                     if (i[3].step==8):
                         self.tex_out+=i[0]
                         self.setStep(i, 9)
-                    
-                
+
     def update (self):
         for i in self.value:
             if i[3].on:
@@ -250,9 +249,9 @@ class SimulateRSA:
                 self.draw(i[4].update())
             if i[5].on:
                 self.draw(i[5].update())
-    
+
     def checkInput(self):
-        self.input_active = self.ip.checkInObj(self.pos)
+        self.input_active = self.ip.checkInObj(self.pos) or self.keysize.checkInObj((self.pos))
 
     def initEncode(self):
         self.index_prepare = 0
@@ -282,8 +281,181 @@ class SimulateRSA:
         self.draw(self.mcd.update())
         self.draw(self.unicode.update())
     
+    def yesNo(self, yn):
+        if self.type != "key":
+            return
+        match self.stepkey:
+            case 3:
+                if yn:
+                    self.rsa.p = self.p
+                    self.rsa.q = self.q
+                    self.stepkey += 1
+                else:
+                    self.stepkey = 1
+            case 7:
+                if yn:
+                    self.rsa.e = self.e
+                    self.stepkey += 1
+                else:
+                    self.stepkey = 6
+
+    def eventCreateKey(self):
+        match self.stepkey:
+            case 0:
+                self.rsa.keysize = int(self.input_text)
+                self.input_text = ''
+                self.stepkey += 1
+                print(self.rsa.keysize)
+            case 1:
+                self.stepkey += 1
+                pygame.draw.rect(self.screen, "black", [10, 150, 300, 30])
+                text = self.font.render("Đang tính toán ...", True, "orange")
+                self.screen.blit(text, (10, 150))
+                self.p=0
+                self.q=0
+            case 4:
+                self.rsa.N = self.rsa.calculateN(self.p, self.q)
+                self.phiN = self.rsa.calculatePhiN(self.p, self.q)
+                self.stepkey += 1
+            case 5:
+                self.stepkey += 1
+            case 6:
+                self.e = self.rsa.selectE(self.phiN, self.rsa.keysize)
+                self.stepkey += 1
+            case 8:
+                self.rsa.d = self.rsa.calculateD(self.e, self.phiN)
+                self.stepkey += 1
+            case 9:
+                self.stepkey += 1
+            case 10:
+                self.type = "auto"
+                self.initEncode()
+                self.auto = "input"
+                
     def createKey(self):
-        pass
+        match self.stepkey:
+            case 0:
+                text = self.font.render("Nhập keysize:", True, "orange")
+                self.screen.blit(text, (10, 125))
+                self.draw(self.keysize.update([130, 120],input = self.input_text))
+            case 1:
+                text = self.font.render("Tạo hai số nguyên tố lớn p và q?", True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("Nhấn enter để tiếp tục ...", True, "orange")
+                self.screen.blit(text, (10, 150))
+            case 2:
+                self.p = self.rsa.snt.generateLargePrime(self.rsa.keysize)
+                self.q = self.rsa.snt.generateLargePrime(self.rsa.keysize)
+                self.stepkey += 1
+                pass
+            case 3:
+                text = self.font.render("Tạo hai số nguyên tố lớn p và q?", True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("p="+str(self.p), True, "orange")
+                self.screen.blit(text, (10, 160))
+                text = self.font.render("q="+str(self.q), True, "orange")
+                self.screen.blit(text, (10, 190))
+                text = self.font.render("Nhấn y để đồng ý, nhấn n để tạo lại", True, "orange")
+                self.screen.blit(text, (10, 220))
+            case 4:
+                text = self.font.render("p="+str(self.p), True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("q="+str(self.q), True, "orange")
+                self.screen.blit(text, (10, 150))
+                text = self.font.render("Tính n=p.q và hàm Euler phi(n)=(p-1)(q-1)", True, "orange")
+                self.screen.blit(text, (10, 200))
+                text = self.font.render("Enter", True, "orange")
+                self.screen.blit(text, (10, 225))
+            case 5:
+                text = self.font.render("p="+str(self.p), True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("q="+str(self.q), True, "orange")
+                self.screen.blit(text, (10, 150))
+                text = self.font.render("Tính n=p.q và hàm Euler phi(n)=(p-1)(q-1)", True, "orange")
+                self.screen.blit(text, (10, 200))
+                text = self.font.render("n="+str(self.rsa.N), True, "orange")
+                self.screen.blit(text, (10, 225))
+                text = self.font.render("Phi(n)="+str( self.phiN), True, "orange")
+                self.screen.blit(text, (10, 250))
+            case 6:
+                text = self.font.render("p="+str(self.p), True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("q="+str(self.q), True, "orange")
+                self.screen.blit(text, (10, 150))
+                text = self.font.render("Tính n=p.q và hàm Euler phi(n)=(p-1)(q-1)", True, "orange")
+                self.screen.blit(text, (10, 200))
+                text = self.font.render("n="+str(self.rsa.N), True, "orange")
+                self.screen.blit(text, (10, 225))
+                text = self.font.render("Phi(n)="+str( self.phiN), True, "orange")
+                self.screen.blit(text, (10, 250))
+                text = self.font.render("Chọn một số tự nhiên e sao cho 1<e<Phi(n) và nguyên tố cùng nhau với Phi(n)", True, "orange")
+                self.screen.blit(text, (10, 290))
+            case 7:
+                text = self.font.render("p="+str(self.p), True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("q="+str(self.q), True, "orange")
+                self.screen.blit(text, (10, 150))
+                text = self.font.render("Tính n=p.q và hàm Euler phi(n)=(p-1)(q-1)", True, "orange")
+                self.screen.blit(text, (10, 200))
+                text = self.font.render("n="+str(self.rsa.N), True, "orange")
+                self.screen.blit(text, (10, 225))
+                text = self.font.render("Phi(n)="+str( self.phiN), True, "orange")
+                self.screen.blit(text, (10, 250))
+                text = self.font.render("Chọn một số tự nhiên e sao cho 1<e<Phi(n) và nguyên tố cùng nhau với Phi(n)", True, "orange")
+                self.screen.blit(text, (10, 290))
+                text = self.font.render("Đã tìm được: e="+str(self.e), True, "orange")
+                self.screen.blit(text, (10, 320))
+                text = self.font.render("Nhấn y để đồng ý, nhấn n để tạo lại", True, "orange")
+                self.screen.blit(text, (10, 345))
+            case 8:
+                text = self.font.render("p="+str(self.p), True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("q="+str(self.q), True, "orange")
+                self.screen.blit(text, (10, 150))
+                text = self.font.render("Tính n=p.q và hàm Euler phi(n)=(p-1)(q-1)", True, "orange")
+                self.screen.blit(text, (10, 200))
+                text = self.font.render("n="+str(self.rsa.N), True, "orange")
+                self.screen.blit(text, (10, 225))
+                text = self.font.render("Phi(n)="+str( self.phiN), True, "orange")
+                self.screen.blit(text, (10, 250))
+                text = self.font.render("Chọn một số tự nhiên e sao cho 1<e<Phi(n) và nguyên tố cùng nhau với Phi(n)", True, "orange")
+                self.screen.blit(text, (10, 290))
+                text = self.font.render("Đã tìm được: e="+str(self.e), True, "orange")
+                self.screen.blit(text, (10, 320))
+                text = self.font.render("Tính d sao cho d.e đồng dư với 1 (mod Phi(n))", True, "orange")
+                self.screen.blit(text, (10, 345))
+            case 9:
+                text = self.font.render("p="+str(self.p), True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("q="+str(self.q), True, "orange")
+                self.screen.blit(text, (10, 150))
+                text = self.font.render("Tính n=p.q và hàm Euler phi(n)=(p-1)(q-1)", True, "orange")
+                self.screen.blit(text, (10, 200))
+                text = self.font.render("n="+str(self.rsa.N), True, "orange")
+                self.screen.blit(text, (10, 225))
+                text = self.font.render("Phi(n)="+str( self.phiN), True, "orange")
+                self.screen.blit(text, (10, 250))
+                text = self.font.render("Chọn một số tự nhiên e sao cho 1<e<Phi(n) và nguyên tố cùng nhau với Phi(n)", True, "orange")
+                self.screen.blit(text, (10, 290))
+                text = self.font.render("e="+str(self.e), True, "orange")
+                self.screen.blit(text, (10, 320))
+                text = self.font.render("Tính d sao cho d.e đồng dư với 1 (mod Phi(n))", True, "orange")
+                self.screen.blit(text, (10, 345))
+                text = self.font.render("d="+str(self.rsa.d), True, "orange")
+                self.screen.blit(text, (10, 370))
+            case 10:
+                text = self.font.render("Đã hoàn tất việc tạo khóa:", True, "orange")
+                self.screen.blit(text, (10, 125))
+                text = self.font.render("Khóa công khai n, e", True, "orange")
+                self.screen.blit(text, (10, 150))
+                text = self.font.render("khóa bí mật n, d", True, "orange")
+                self.screen.blit(text, (10, 175))
+                text = self.font.render("n="+str(self.rsa.N), True, "orange")
+                self.screen.blit(text, (10, 200))
+                text = self.font.render("e="+str(self.e), True, "orange")
+                self.screen.blit(text, (10, 225))
+                text = self.font.render("d="+str(self.rsa.d), True, "orange")
+                self.screen.blit(text, (10, 250))
     
     def autoInput(self):
         if time.time() > self.t_go+0.08:
@@ -308,19 +480,17 @@ class SimulateRSA:
                 return False
         return True
     
-    def checkStatusKey(self):
-        pass
-    
     def run(self):
         while self.running:
-            self.event()
-           
             # Vẽ lên màn hình
             self.screen.fill("black")  # Xóa màn hình bằng màu đen
             self.checkInput()
             
-            self.move()
-            self.draw(self.ds.update())
+            if self.type=="key":
+                self.createKey()
+            else:
+                self.move()
+                self.draw(self.ds.update())
             
             if self.type=="encode":
                 self.encode()
@@ -328,8 +498,6 @@ class SimulateRSA:
             if self.type=="decode":
                 self.decode()
                 
-            if self.type=="key":
-                pass
             if self.type=="auto":
                 if self.auto == "encode":
                     if self.checkStatusEncode():
@@ -347,6 +515,8 @@ class SimulateRSA:
                     
                     
             self.drawString()
+            
+            self.event()
             
             # Cập nhật màn hình
             pygame.display.flip()
@@ -369,9 +539,4 @@ class SimulateRSA:
         # Tạo chuỗi mới với ký tự được thay thế
         new_string = original_string[:index] + replacement_char + original_string[index + 1:]
         return new_string
-
-
-simulate = SimulateRSA()
-
-simulate.run()
 

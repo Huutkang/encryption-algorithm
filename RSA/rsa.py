@@ -1,41 +1,61 @@
 import random
 from prime import PrimeNumberUtils
 
-
-
 class RSA(object):
     """
     Lớp đại diện cho thuật toán RSA
     """
 
-    def __init__(self, keysize=64):
-        self.keysize = keysize
+    def __init__(self, keysize=64, test=False):
         self.snt = PrimeNumberUtils()
-        self.generateKeys(self.keysize)
+        self.e, self.d, self.N = 0, 0, 0
+        if not test:
+            self.keysize = keysize
+            self.generateKeys(self.keysize)
 
     def generateKeys(self, keysize=128):
         """
         Sinh cặp khóa RSA (e, d, N) với keysize bit
         """
-        e = d = N = 0
-
-        # Tạo hai số nguyên tố lớn p và q
         p = self.snt.generateLargePrime(keysize)
         q = self.snt.generateLargePrime(keysize)
 
-        N = p * q  # Tích N = p * q
-        phiN = (p - 1) * (q - 1)  # Tính hàm Euler phi(N)
+        self.N = self.calculateN(p, q)
+        phiN = self.calculatePhiN(p, q)
 
-        # Chọn số e thỏa mãn gcd(e, phiN) = 1
+        self.e = self.selectE(phiN, keysize)
+        self.d = self.calculateD(self.e, phiN)
+
+        self.p, self.q = p, q
+    
+    @staticmethod
+    def calculateN(p, q):
+        """
+        Tính N = p * q
+        """
+        return p * q
+
+    @staticmethod
+    def calculatePhiN(p, q):
+        """
+        Tính hàm Euler phi(N) = (p-1) * (q-1)
+        """
+        return (p - 1) * (q - 1)
+
+    def selectE(self, phiN, keysize):
+        """
+        Chọn số e thỏa mãn gcd(e, phiN) = 1
+        """
         while True:
             e = random.randrange(2 ** (keysize - 1), 2 ** keysize - 1)
-            if RSA.isCoPrime(e, phiN):
-                break
+            if self.isCoPrime(e, phiN):
+                return e
 
-        # Tính d là nghịch đảo modular của e mod phiN
-        d = RSA.modularInv(e, phiN)
-
-        self.p, self.q, self.e, self.d, self.N = p, q, e, d, N
+    def calculateD(self, e, phiN):
+        """
+        Tính d là nghịch đảo modular của e mod phiN
+        """
+        return RSA.modularInv(e, phiN)
 
     @staticmethod
     def isCoPrime(p, q):
@@ -100,10 +120,3 @@ class RSA(object):
         for c in cipher:
             msg += chr(pow(c, self.d, self.N))  # Giải mã từng ký tự
         return msg
-
-
-
-
-# a = RSA()
-# m = [a.p, a.q, a.d, a.e, a.N]
-# print(m)

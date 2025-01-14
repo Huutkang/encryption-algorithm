@@ -1,7 +1,7 @@
 import random
 
 class TruyenKieu:
-    def __init__(self, filename='truyện kiều.txt'):
+    def __init__(self, filename='RSA/truyện kiều.txt'):
         # Mở file và đọc nội dung
         with open(filename, 'r', encoding='utf-8') as file:
             self.content = file.read()

@@ -2,7 +2,7 @@
 
 Đây là dự án môn **Cấu trúc dữ liệu và giải thuật**, tập trung vào việc tìm hiểu và mô phỏng các giải thuật mã hóa phổ biến. Dự án nhằm cung cấp kiến thức cơ bản về mã hóa dữ liệu, áp dụng thực tế vào các bài toán bảo mật thông tin.
 
---- 
+---
 
 ## Nội dung chính
 
@@ -15,7 +15,7 @@
    - Cách mã hóa/giải mã dữ liệu.
    - So sánh hiệu suất và bảo mật giữa các giải thuật.
 
---- 
+---
 
 ## Yêu cầu hệ thống
 
@@ -25,11 +25,12 @@
   - `pycryptodome`
   - `hashlib`
 
---- 
+---
 
 ## Hướng dẫn cài đặt
 
 1. **Clone dự án từ GitHub**:
+
    ```bash
    git clone https://github.com/Huutkang/encryption-algorithm.git
    cd encryption-algorithm
@@ -37,7 +38,7 @@
 
 2. **Để sau viết tiếp**:
 
---- 
+---
 
 ## Quy tắc làm việc nhóm
 
@@ -51,16 +52,20 @@
 
 2. **Luôn pull mã nguồn trước khi bắt đầu**:
    - Đảm bảo mã nguồn được cập nhật từ nhánh `main`:
+
      ```bash
      git pull origin main
      ```
+
    - Nếu bạn muốn pull nhánh từ thành viên khác:
+
      ```bash
      git pull origin <tên_nhánh>
      ```
 
 3. **Commit rõ ràng**:
    - Commit cần có thông điệp mô tả chi tiết:
+
      ```bash
      git commit -m "Thêm mô phỏng AES (feature/aes)"
      ```
@@ -71,7 +76,7 @@
 5. **Kiểm tra kỹ trước khi hợp nhất**:
    - Đảm bảo mã nguồn không có lỗi và đã được kiểm tra kỹ trước khi gửi yêu cầu hợp nhất.
 
---- 
+---
 
 ## Một số lưu ý
 
@@ -80,10 +85,12 @@
 
 2. **Cài đặt thư viện mới**:
    - Nếu thêm thư viện mới, chạy:
+
      ```bash
      pip install <tên_thư_viện>
      pip freeze > requirements.txt
      ```
+
    - Commit file `requirements.txt`.
 
 3. **Liên hệ hỗ trợ**:

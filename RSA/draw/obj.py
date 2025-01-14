@@ -48,7 +48,8 @@ class Obj:
             self.step_x = speed * dx / distance
             self.step_y = speed * dy / distance
 
-    def move(self):
+    def move(self, check=False):
+        if self.on==False: return False
         """
         Di chuyển vật thể tới gần đích.
         :return: True nếu đã tới đích, False nếu chưa.
@@ -67,6 +68,8 @@ class Obj:
             self.step_y = 0
             return True
         else:
+            if check:
+                return False
             # Tiến tới đích
             self.xy[0] += self.step_x
             self.xy[1] += self.step_y

@@ -1,4 +1,4 @@
-import pygame
+import pygame, re
 import sys, time, random
 from rsa import RSA
 from draw.input import Input
@@ -10,7 +10,7 @@ from draw.mcd import Mcd
 from draw.unicode import Unicode
 from draw.button import Button
 from draw.str import String
-
+from truyen_kieu import TruyenKieu
 
 class SimulateRSA:
 
@@ -33,7 +33,7 @@ class SimulateRSA:
         # Khởi tạo Pygame
         pygame.init()
         self.rsa = RSA()
-        
+        self.truyen_kieu = TruyenKieu()
         self.font = pygame.font.SysFont("Calibri", 30)
         self.screen = pygame.display.set_mode((self.dis_width, self.dis_height))
         pygame.display.set_caption("RSA")
@@ -50,6 +50,14 @@ class SimulateRSA:
         self.mcd = Mcd()
         self.unicode = Unicode()
         
+        # self.rsa.N = 179711192233038506470283982207179351179
+        # self.rsa.d = 151225911394725810029362326109652907603
+        # self.rsa.e = 11964885223040611691
+        
+        self.rsa.N = self.rsa.N
+        self.rsa.d = self.rsa.d
+        self.rsa.e = self.rsa.e
+        
         self.tex_out = ""
         
         self.bd = False
@@ -61,8 +69,9 @@ class SimulateRSA:
         self.index_prepare = 0
         self.t_go = 0
         
-        self.type = "encode" # decode, create key
+        self.type = "auto" # "encode" # decode, key
         
+        self.auto = "input"
         
         
     def go(self):
@@ -78,14 +87,16 @@ class SimulateRSA:
             self.t_go = time.time()
             if len(self.input_text)>0:
                 self.value[self.index_prepare][3].on = True
-                self.value[self.index_prepare][3].setMove((298, 300), 3)
+                self.value[self.index_prepare][3].setMove((320, 300), 3)
                 self.value[self.index_prepare][4].on = False
                 self.index_prepare += 1
                 self.input_text = self.input_text[1:]
             else:
                 self.bd=False
     
-    def decode(self):
+    def dcd(self):
+        if self.ds.checkgoto0() == False:
+            return
         if time.time() > self.t_go+1:
             if len(self.ds.dq)>0:
                 self.t_go = time.time()
@@ -96,7 +107,7 @@ class SimulateRSA:
                 self.setStep(i, 6)
                 self.index_prepare += 1
                 self.ds.pop()
-    
+        
     def initStr(self):
         mh = self.rsa.encrypt(self.input_text)
         m=[]
@@ -112,33 +123,50 @@ class SimulateRSA:
         self.screen.blit(text, (10, 5))
         text = self.font.render("e: "+str(self.rsa.e), True, "orange")
         self.screen.blit(text, (700, 10))
-        
-        
-     
+    
     def draw(self, obj):
         self.screen.blit(obj[0], obj[1])
-        
+    
+    def is_valid_character(self, char):
+        special_characters = r"""`~!@#$%^&*()-_=+[{]}\\|;:'",<.>/? """
+        pattern = (
+            rf"^[{re.escape(special_characters)}"
+            r"a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂÂÊÔơưăâêô0-9]$"
+        )
+        return bool(re.match(pattern, char))
+    
     def event(self):
         t1=0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-
             # # Xử lý nhấp chuột
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.pos = (event.pos[0], event.pos[1])
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.type = "auto"
+                    self.initEncode()
+                    self.auto = "input"
+                if event.key == pygame.K_DOWN:
+                    self.type = "encode"
+                    self.initEncode()
                 if event.key == pygame.K_RIGHT:
                     if self.type == "encode":
                         self.type = "decode"
-                        self.index_prepare = 0
-            
+                        self.initDecode()
+                if event.key == pygame.K_LEFT:
+                    if self.type == "decode":
+                        self.type = "encode"
+                        self.initEncode()
+                if event.key == pygame.K_RETURN:
+                    self.bd = True
+                    self.initStr()
             # Xử lý nhập bàn phím
             if event.type == pygame.KEYDOWN and self.input_active:
                 t1 = time.time()
             if event.type == pygame.KEYUP and self.input_active:
                 t = time.time()-t1
-                    
                 if event.key == pygame.K_BACKSPACE:
                     if (t<0.01):
                         if self.x==False:
@@ -146,14 +174,14 @@ class SimulateRSA:
                             self.ss=event.unicode
                             self.t2 = time.time()
                         self.d+=1
-                        
                     else:
                         self.input_text = self.input_text[:-1]  # Xóa ký tự cuối
                 else:
                     if len(self.input_text)<35:
-                        self.input_text += event.unicode  # Thêm ký tự Unicode 
+                        if self.is_valid_character(event.unicode):
+                            self.input_text += event.unicode  # Thêm ký tự Unicode 
         if self.x:
-            if (time.time()-self.t2>0.05):
+            if (time.time()-self.t2>0.02):
                 self.x=False
                 self.input_text=SimulateRSA.replace_char_at_index(self.input_text,len(self.input_text)-self.d, self.ss)
                 self.d=0
@@ -167,14 +195,14 @@ class SimulateRSA:
             a=i[3].move()
             b=i[4].move()
             c=i[5].move()
-            if self.type == "encode":
+            if self.type == "encode" or (self.type == "auto" and self.auto == "encode"):
                 vt=self.ds.getCoordinates()
                 if a:
                     if (i[3].step==1):
                         self.setStep(i, 2)
                         i[3].setMove(vt, 3)
-                        i[5].xy = [298, 300]
-                        i[5].setMove((298, 547), 3)
+                        i[5].xy = [320, 300]
+                        i[5].setMove((320, 547), 3)
                         i[5].on = True
                         self.setStep(i, 3)
                 if c:
@@ -182,27 +210,30 @@ class SimulateRSA:
                         i[5].on = False
                         self.setStep(i, 4)
                         i[4].xy = [116, 547]
-                        i[4].setMove((vt[0]+50, vt[1]+8), 3)
+                        i[4].setMove((vt[0]+50, vt[1]+8), 4)
                         self.ds.append(i[0], str(i[2]))
                         i[4].on = True
-                if b and c:
+                if b:
                     if (i[5].step==4):
+                        if len(self.ds.dq)>20:
+                            self.ds.forward()
                         self.setStep(i, 5)
                         i[3].on = False
                         i[4].on = False
                         self.ds.unlock()
-            if self.type == "decode":
+            elif self.type == "decode" or (self.type == "auto" and self.auto == "decode"):
                 if b:
                     if (i[4].step==6):
                         self.setStep(i, 7)
                         i[5].xy = [400, 300]
-                        i[5].setMove((400, 530), 3)
+                        i[5].setMove((370, 530), 3)
                         i[5].on = True
+                        i[3].on = False
                 if c:
                     if (i[3].step==7):
                         i[4].on = False
-                        i[3].xy = [400, 530]
-                        i[3].setMove((400, 720), 3)
+                        i[3].xy = [370, 530]
+                        i[3].setMove((370, 720), 3)
                         i[3].on = True
                         self.setStep(i, 8)
                 if a:
@@ -223,6 +254,63 @@ class SimulateRSA:
     def checkInput(self):
         self.input_active = self.ip.checkInObj(self.pos)
 
+    def initEncode(self):
+        self.index_prepare = 0
+        self.input_text = ""
+        self.value = []
+        self.unicode.xy = [266, 270]
+        self.ds.reset()
+    
+    def initDecode(self):
+        self.unicode.xy=[300, 500]
+        self.index_prepare = 0
+        self.ds.goto0()
+        self.tex_out = ""
+    
+    def encode(self):
+        self.go() 
+        self.draw(self.ip.update([70, 120],input = self.input_text))
+        self.draw(self.button.update())
+        self.update()
+        self.draw(self.cme.update())
+        self.draw(self.unicode.update())
+    
+    def decode(self):
+        self.dcd()
+        self.update()
+        self.draw(self.out.update([70, 720],input = self.tex_out))
+        self.draw(self.mcd.update())
+        self.draw(self.unicode.update())
+    
+    def createKey(self):
+        pass
+    
+    def autoInput(self):
+        if time.time() > self.t_go+0.08:
+            self.t_go = time.time()
+            vb = self.truyen_kieu.get_next_character()
+            if vb =="\n":
+                self.auto = "encode"
+                self.bd = True
+                self.initStr()
+            else:
+                self.input_text += vb
+
+    def checkStatusEncode(self):
+        for i in self.value:
+            if i[3].step < 5:
+                return False
+        return True
+    
+    def checkStatusDecode(self):
+        for i in self.value:
+            if i[3].step < 9:
+                return False
+        return True
+    
+    def checkStatusKey(self):
+        pass
+    
     def run(self):
         while self.running:
             self.event()
@@ -232,28 +320,32 @@ class SimulateRSA:
             self.checkInput()
             
             self.move()
-            
             self.draw(self.ds.update())
             
             if self.type=="encode":
-                self.go() 
-                self.draw(self.ip.update([70, 120],input = self.input_text))
-                self.draw(self.button.update())
-                self.update()
-                self.draw(self.cme.update())
-                self.draw(self.unicode.update())
+                self.encode()
             
             if self.type=="decode":
                 self.decode()
-                self.update()
-                self.draw(self.out.update([70, 720],input = self.tex_out))
-                self.draw(self.mcd.update())
-                self.unicode.xy=[300, 500]
-                self.draw(self.unicode.update())
                 
-            if self.type=="create key":
+            if self.type=="key":
                 pass
-            
+            if self.type=="auto":
+                if self.auto == "encode":
+                    if self.checkStatusEncode():
+                        self.auto = "decode"
+                        self.initDecode()
+                    self.encode()
+                elif self.auto == "decode":
+                    self.decode()
+                    if self.checkStatusDecode():
+                        self.initEncode()
+                        self.auto = "input"
+                elif self.auto == "input":
+                    self.encode()
+                    self.autoInput()
+                    
+                    
             self.drawString()
             
             # Cập nhật màn hình

@@ -6,3 +6,6 @@ __pycache__/
 # Bỏ qua các file cấu hình hệ thống IDE/Editor
 *.vscode/
 .idea/
+
+RSA/__pycache__
+

@@ -100,3 +100,10 @@ class RSA(object):
         for c in cipher:
             msg += chr(pow(c, self.d, self.N))  # Giải mã từng ký tự
         return msg
+
+
+
+
+# a = RSA()
+# m = [a.p, a.q, a.d, a.e, a.N]
+# print(m)

@@ -1,5 +1,5 @@
 import pygame, re
-import sys, time, random
+import sys, time
 from rsa import RSA
 from draw.input import Input
 from draw.output import Output

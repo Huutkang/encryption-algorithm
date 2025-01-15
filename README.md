@@ -17,10 +17,12 @@
 ### 1. Caesar Cipher
 
 **Đặc điểm:**
+
 - Là một trong những thuật toán mã hóa cổ điển, dễ hiểu và dễ triển khai.
 - Dịch chuyển các ký tự trong bản rõ một số lượng bước cố định.
 
 **Ứng dụng:**
+
 - Tìm hiểu nguyên lý mã hóa cơ bản.
 - Thích hợp để giảng dạy hoặc minh họa.
 
@@ -32,11 +34,13 @@
 ### 2. Advanced Encryption Standard (AES)
 
 **Đặc điểm:**
+
 - Mã hóa đối xứng hiện đại, được chuẩn hóa bởi NIST.
 - Sử dụng các kích thước khóa: 128-bit, 192-bit, 256-bit.
 - Bảo mật cao và tốc độ xử lý nhanh.
 
 **Ứng dụng:**
+
 - Bảo mật dữ liệu trong giao tiếp mạng.
 - Lưu trữ dữ liệu an toàn.
 
@@ -48,10 +52,12 @@
 ### 3. RSA (Rivest–Shamir–Adleman)
 
 **Đặc điểm:**
+
 - Mã hóa bất đối xứng sử dụng cặp khóa công khai và khóa riêng.
 - Dựa trên bài toán phân tích số nguyên lớn, rất khó để phá vỡ.
 
 **Ứng dụng:**
+
 - Mã hóa email, chữ ký số.
 - Bảo mật giao dịch trực tuyến.
 
@@ -63,11 +69,13 @@
 ### 4. SHA-256 (Secure Hash Algorithm 256-bit)
 
 **Đặc điểm:**
+
 - Hàm băm được sử dụng rộng rãi trong blockchain và bảo mật dữ liệu.
 - Biến đổi dữ liệu đầu vào thành chuỗi băm 256-bit cố định.
 - Không thể đảo ngược về dữ liệu gốc.
 
 **Ứng dụng:**
+
 - Xác minh tính toàn vẹn của dữ liệu.
 - Lưu trữ mật khẩu an toàn.
 
@@ -123,16 +131,15 @@
 
 ---
 
-
 ## Tác giả
 
 - Dự án được thực hiện bởi nhóm **Nhóm 9**.
 - Họ và tên các thành viên:
-   - Nguyễn Xuân An
-   - Võ Đình Đại
-   - Trần Ngọc Phúc
-   - Trịnh Trọng Phước
-   - Nguyễn Hữu Thắng
+  - Nguyễn Xuân An
+  - Võ Đình Đại
+  - Trần Ngọc Phúc
+  - Trịnh Trọng Phước
+  - Nguyễn Hữu Thắng
 - Mọi đóng góp hoặc thắc mắc, vui lòng tạo **Issue** trong GitHub Repository.
 
 ---

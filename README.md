@@ -1,21 +1,78 @@
-# Tìm hiểu và mô phỏng một số giải thuật mã hóa
+# Nghiên cứu các giải thuật mã hóa
 
 Đây là dự án môn **Cấu trúc dữ liệu và giải thuật**, tập trung vào việc tìm hiểu và mô phỏng các giải thuật mã hóa phổ biến. Dự án nhằm cung cấp kiến thức cơ bản về mã hóa dữ liệu, áp dụng thực tế vào các bài toán bảo mật thông tin.
 
 ---
 
+## Mục tiêu
+
+- Hiểu rõ nguyên lý hoạt động của các giải thuật mã hóa cơ bản và nâng cao.
+
+- Đánh giá hiệu quả và tính bảo mật của từng giải thuật trong các ứng dụng thực tế.
+
+- Cung cấp tài liệu minh họa và mã nguồn để hỗ trợ học tập và nghiên cứu.
+
 ## Nội dung chính
 
-1. **Giải thuật mã hóa**:
-   - Mã hóa đối xứng (Symmetric Encryption): AES, DES, Triple DES.
-   - Mã hóa bất đối xứng (Asymmetric Encryption): RSA, ECC.
-   - Các giải thuật khác: MD5, SHA-256.
+### 1. Caesar Cipher
 
-2. **Mô phỏng hoạt động**:
-   - Cách mã hóa/giải mã dữ liệu.
-   - So sánh hiệu suất và bảo mật giữa các giải thuật.
+**Đặc điểm:**
+- Là một trong những thuật toán mã hóa cổ điển, dễ hiểu và dễ triển khai.
+- Dịch chuyển các ký tự trong bản rõ một số lượng bước cố định.
+
+**Ứng dụng:**
+- Tìm hiểu nguyên lý mã hóa cơ bản.
+- Thích hợp để giảng dạy hoặc minh họa.
+
+**Giao diện demo:**
+![ceaserCipher](https://github.com/user-attachments/assets/a4b12e25-8cb7-45de-b18f-fadc286d972b)
 
 ---
+
+### 2. Advanced Encryption Standard (AES)
+
+**Đặc điểm:**
+- Mã hóa đối xứng hiện đại, được chuẩn hóa bởi NIST.
+- Sử dụng các kích thước khóa: 128-bit, 192-bit, 256-bit.
+- Bảo mật cao và tốc độ xử lý nhanh.
+
+**Ứng dụng:**
+- Bảo mật dữ liệu trong giao tiếp mạng.
+- Lưu trữ dữ liệu an toàn.
+
+**Giao diện demo:**
+![image](https://github.com/user-attachments/assets/0eb64cc8-d14f-4d7a-b3b7-6756e07d6169)
+
+---
+
+### 3. RSA (Rivest–Shamir–Adleman)
+
+**Đặc điểm:**
+- Mã hóa bất đối xứng sử dụng cặp khóa công khai và khóa riêng.
+- Dựa trên bài toán phân tích số nguyên lớn, rất khó để phá vỡ.
+
+**Ứng dụng:**
+- Mã hóa email, chữ ký số.
+- Bảo mật giao dịch trực tuyến.
+
+**Giao diện demo:**
+![image](https://github.com/user-attachments/assets/5c1d811e-b534-4fb0-998a-93ca2e30c1a1)
+
+---
+
+### 4. SHA-256 (Secure Hash Algorithm 256-bit)
+
+**Đặc điểm:**
+- Hàm băm được sử dụng rộng rãi trong blockchain và bảo mật dữ liệu.
+- Biến đổi dữ liệu đầu vào thành chuỗi băm 256-bit cố định.
+- Không thể đảo ngược về dữ liệu gốc.
+
+**Ứng dụng:**
+- Xác minh tính toàn vẹn của dữ liệu.
+- Lưu trữ mật khẩu an toàn.
+
+**Giao diện demo:**
+![image](https://github.com/user-attachments/assets/688e2f87-aacd-453c-a73d-ecacdcbce140)
 
 ## Yêu cầu hệ thống
 
@@ -24,19 +81,7 @@
   - `cryptography`
   - `pycryptodome`
   - `hashlib`
-
----
-
-## Hướng dẫn cài đặt
-
-1. **Clone dự án từ GitHub**:
-
-   ```bash
-   git clone https://github.com/Huutkang/encryption-algorithm.git
-   cd encryption-algorithm
-   ```
-
-2. **Để sau viết tiếp**:
+  - `pygame`
 
 ---
 
@@ -78,29 +123,16 @@
 
 ---
 
-## Một số lưu ý
-
-1. **Không đẩy các file tạm thời hoặc môi trường ảo**:
-   - Các file như `.pyc`, thư mục `venv` đã được liệt kê trong `.gitignore`.
-
-2. **Cài đặt thư viện mới**:
-   - Nếu thêm thư viện mới, chạy:
-
-     ```bash
-     pip install <tên_thư_viện>
-     pip freeze > requirements.txt
-     ```
-
-   - Commit file `requirements.txt`.
-
-3. **Liên hệ hỗ trợ**:
-   - Nếu gặp vấn đề, vui lòng liên hệ **Hữu Thắng** hoặc các thành viên khác để được hỗ trợ.
-
----
 
 ## Tác giả
 
-- Dự án được thực hiện bởi nhóm **Đặt tên đê**.
+- Dự án được thực hiện bởi nhóm **Nhóm 9**.
+- Họ và tên các thành viên:
+   - Nguyễn Xuân An
+   - Võ Đình Đại
+   - Trần Ngọc Phúc
+   - Trịnh Trọng Phước
+   - Nguyễn Hữu Thắng
 - Mọi đóng góp hoặc thắc mắc, vui lòng tạo **Issue** trong GitHub Repository.
 
 ---

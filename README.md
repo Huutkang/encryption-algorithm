@@ -25,7 +25,7 @@
 - Thích hợp để giảng dạy hoặc minh họa.
 
 **Giao diện demo:**
-![Caesar Cipher Demo]![ceaserCipher](https://github.com/user-attachments/assets/a4b12e25-8cb7-45de-b18f-fadc286d972b)
+![ceaserCipher](https://github.com/user-attachments/assets/a4b12e25-8cb7-45de-b18f-fadc286d972b)
 
 ---
 
@@ -41,7 +41,7 @@
 - Lưu trữ dữ liệu an toàn.
 
 **Giao diện demo:**
-![AES Demo]![image](https://github.com/user-attachments/assets/0eb64cc8-d14f-4d7a-b3b7-6756e07d6169)
+![image](https://github.com/user-attachments/assets/0eb64cc8-d14f-4d7a-b3b7-6756e07d6169)
 
 ---
 
@@ -56,7 +56,7 @@
 - Bảo mật giao dịch trực tuyến.
 
 **Giao diện demo:**
-![RSA Demo]![image](https://github.com/user-attachments/assets/5c1d811e-b534-4fb0-998a-93ca2e30c1a1)
+![image](https://github.com/user-attachments/assets/5c1d811e-b534-4fb0-998a-93ca2e30c1a1)
 
 ---
 
@@ -72,8 +72,7 @@
 - Lưu trữ mật khẩu an toàn.
 
 **Giao diện demo:**
-![SHA-256 Demo]![image](https://github.com/user-attachments/assets/08560ba6-45af-4379-96e0-392620560b31)
-
+![image](https://github.com/user-attachments/assets/688e2f87-aacd-453c-a73d-ecacdcbce140)
 
 ## Yêu cầu hệ thống
 
@@ -123,7 +122,6 @@
    - Đảm bảo mã nguồn không có lỗi và đã được kiểm tra kỹ trước khi gửi yêu cầu hợp nhất.
 
 ---
-
 
 
 ## Tác giả

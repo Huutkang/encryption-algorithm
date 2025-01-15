@@ -127,6 +127,12 @@
 ## Tác giả
 
 - Dự án được thực hiện bởi nhóm **Nhóm 9**.
+- Họ và tên các thành viên:
+   - Nguyễn Xuân An
+   - Võ Đình Đại
+   - Trần Ngọc Phúc
+   - Trịnh Trọng Phước
+   - Nguyễn Hữu Thắng
 - Mọi đóng góp hoặc thắc mắc, vui lòng tạo **Issue** trong GitHub Repository.
 
 ---

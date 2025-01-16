@@ -135,6 +135,8 @@ class SimulateCaesarCipher:
                 self.indexDecode=0
                 self.encodeOn = False
                 self.deCodeOn = False
+                self.op1=''
+                self.op2=''
                 
 
     def checkDoneStep(self, step):

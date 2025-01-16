@@ -39,8 +39,7 @@ class SimulateCaesarCipher:
         self.encodeOn = False
         self.deCodeOn = False
         self.t=0
-        
-        
+        self.lockEnter = False
 
     def draw(self, obj):
         self.screen.blit(obj[0], obj[1])
@@ -55,11 +54,13 @@ class SimulateCaesarCipher:
                 self.pos = (event.pos[0], event.pos[1])
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
-                    self.rotatingAlphabet.rotate_right()
-                    self.caesarCipher.decrease_shift()
+                    if self.step==0:
+                        self.rotatingAlphabet.rotate_right()
+                        self.caesarCipher.decrease_shift()
                 elif event.key == pygame.K_LEFT:
-                    self.rotatingAlphabet.rotate_left()
-                    self.caesarCipher.increase_shift()
+                    if self.step ==0:
+                        self.rotatingAlphabet.rotate_left()
+                        self.caesarCipher.increase_shift()
                 elif event.key == pygame.K_RETURN:
                     self.eventEnter()
             
@@ -75,6 +76,8 @@ class SimulateCaesarCipher:
 
 
     def eventEnter(self):
+        if self.lockEnter:
+            return
         match self.step:
             case 0:
                 if len(self.input_text)>0:
@@ -89,10 +92,12 @@ class SimulateCaesarCipher:
                     self.text_atip = 'CAESAR CIPHER'
                     self.t = time.time()
                     self.autoIp=True
+                    self.lockEnter = True
             case 1:
                 self.encodeOn=True
                 self.indexEndcode=0
                 self.step += 1
+                self.lockEnter = True
             case 2:
                 for i in self.chars:
                     i.xy = [400, -200]
@@ -112,9 +117,10 @@ class SimulateCaesarCipher:
                 self.deCodeOn=True
                 self.indexDecode=0
                 self.step += 1
+                self.lockEnter = True
             case 6:
                 self.output2.xy = [300, 700]
-                self.chars = []
+                self.chars.clear()
                 self.step += 1
                 self.op2=self.input_text
             case 7:
@@ -125,6 +131,13 @@ class SimulateCaesarCipher:
                 self.input_text =''
                 self.step = 0
                 self.ip.setMove([200, 70], 10)
+                
+
+    def checkDoneStep(self, step):
+        for i in self.chars:
+            if i.step<step:
+                return False
+        return True
 
     def encode(self):
         if self.encodeOn:
@@ -193,6 +206,7 @@ class SimulateCaesarCipher:
                 self.indexAutoInput += 1
                 if self.indexAutoInput >= len(self.text_atip):
                     self.autoIp = False
+                    self.lockEnter = False
     
     def update (self):
         self.draw(self.output2.update(input=self.op2))
@@ -214,6 +228,11 @@ class SimulateCaesarCipher:
             self.draw(self.rotatingAlphabet.update())
         else:
             self.draw(self.alphabet.update())
+        if self.step == 2 and self.checkDoneStep(3):
+            self.lockEnter = False
+        if self.step == 6 and self.checkDoneStep(6):
+            self.lockEnter = False
+        
 
 
     def checkInput(self):
@@ -242,10 +261,4 @@ class SimulateCaesarCipher:
         pygame.quit()
         sys.exit()
 
-
-
-
-simulate = SimulateCaesarCipher()
-
-simulate.run()
 

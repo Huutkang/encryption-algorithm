@@ -73,7 +73,7 @@ class SimulateCaesarCipher:
                     if len(self.input_text)<30:
                         if event.unicode.isalpha() or event.unicode.isspace():
                             self.input_text += event.unicode.upper()
-
+                            self.input_text=self.input_text.replace('\r', '')
 
     def eventEnter(self):
         if self.lockEnter:
@@ -131,6 +131,8 @@ class SimulateCaesarCipher:
                 self.input_text =''
                 self.step = 0
                 self.ip.setMove([200, 70], 10)
+                self.indexEndcode=0
+                self.indexDecode=0
                 
 
     def checkDoneStep(self, step):
@@ -233,6 +235,8 @@ class SimulateCaesarCipher:
         if self.step == 6 and self.checkDoneStep(6):
             self.lockEnter = False
         
+        text = self.font.render("Shift: "+str(self.caesarCipher.shift), True, "orange")
+        self.screen.blit(text, (1100, 27))
 
 
     def checkInput(self):

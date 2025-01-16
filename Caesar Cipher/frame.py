@@ -83,7 +83,7 @@ class SimulateCaesarCipher:
                 if len(self.input_text)>0:
                     self.ip.setMove([-700, 0], 10)
                     self.chars = [Char(i, [400, -200]) for i in self.input_text]
-                    for i in range(len(self.input_text)):
+                    for i in range(len(self.chars)):
                         self.chars[i].setMove([200+32*i, 70], 4)
                     self.step += 1
                     self.op1=self.caesarCipher.encrypt(self.input_text)
@@ -133,6 +133,8 @@ class SimulateCaesarCipher:
                 self.ip.setMove([200, 70], 10)
                 self.indexEndcode=0
                 self.indexDecode=0
+                self.encodeOn = False
+                self.deCodeOn = False
                 
 
     def checkDoneStep(self, step):

@@ -122,10 +122,7 @@ def aes_encrypt_stepwise(plaintext, key):
         for block_index, block in enumerate(blocks):
             # Chuyển block thành ma trận 4x4
             plaintext_matrix = to_matrix(list(block.encode("utf-8")))
-            print(f"\nBlock {block_index + 1}: Initial plaintext matrix (decimal)")
-            print(plaintext_matrix)
-            print(f"Block {block_index + 1}: Initial plaintext matrix (hex)")
-            print([[hex(byte) for byte in row] for row in plaintext_matrix])
+            
 
             # Lưu trạng thái ban đầu
             visual_steps.append(
@@ -142,10 +139,7 @@ def aes_encrypt_stepwise(plaintext, key):
             # AddRoundKey đầu tiên
             previous_state = state
             state = add_round_key(state, round_keys[0])
-            print(f"\nBlock {block_index + 1}: After Initial AddRoundKey (decimal)")
-            print(state)
-            print(f"Block {block_index + 1}: After Initial AddRoundKey (hex)")
-            print([[hex(byte) for byte in row] for row in state])
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: AddRoundKey (Initial)",
@@ -156,14 +150,11 @@ def aes_encrypt_stepwise(plaintext, key):
 
             # 9 vòng lặp trung gian
             for round_num in range(1, 10):
-                print(f"\n--- Round {round_num} ---")
+                
                 # SubBytes
                 previous_state = state
                 state = sub_bytes(state)
-                print(f"Block {block_index + 1}: Round {round_num} After SubBytes (decimal)")
-                print(state)
-                print(f"Block {block_index + 1}: Round {round_num} After SubBytes (hex)")
-                print([[hex(byte) for byte in row] for row in state])
+                
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} SubBytes",
@@ -175,10 +166,7 @@ def aes_encrypt_stepwise(plaintext, key):
                 # ShiftRows
                 previous_state = state
                 state = shift_rows(state)
-                print(f"Block {block_index + 1}: Round {round_num} After ShiftRows (decimal)")
-                print(state)
-                print(f"Block {block_index + 1}: Round {round_num} After ShiftRows (hex)")
-                print([[hex(byte) for byte in row] for row in state])
+                
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} ShiftRows",
@@ -190,10 +178,7 @@ def aes_encrypt_stepwise(plaintext, key):
                 # MixColumns
                 previous_state = state
                 state = mix_columns(state)
-                print(f"Block {block_index + 1}: Round {round_num} After MixColumns (decimal)")
-                print(state)
-                print(f"Block {block_index + 1}: Round {round_num} After MixColumns (hex)")
-                print([[hex(byte) for byte in row] for row in state])
+               
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} MixColumns",
@@ -205,10 +190,7 @@ def aes_encrypt_stepwise(plaintext, key):
                 # AddRoundKey
                 previous_state = state
                 state = add_round_key(state, round_keys[round_num])
-                print(f"Block {block_index + 1}: Round {round_num} After AddRoundKey (decimal)")
-                print(state)
-                print(f"Block {block_index + 1}: Round {round_num} After AddRoundKey (hex)")
-                print([[hex(byte) for byte in row] for row in state])
+                
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} AddRoundKey",
@@ -218,14 +200,11 @@ def aes_encrypt_stepwise(plaintext, key):
                 )
 
             # Vòng cuối cùng (không MixColumns)
-            print(f"\n--- Final Round ---")
+            
             # SubBytes
             previous_state = state
             state = sub_bytes(state)
-            print(f"Block {block_index + 1}: Final Round After SubBytes (decimal)")
-            print(state)
-            print(f"Block {block_index + 1}: Final Round After SubBytes (hex)")
-            print([[hex(byte) for byte in row] for row in state])
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: Final Round SubBytes",
@@ -237,10 +216,7 @@ def aes_encrypt_stepwise(plaintext, key):
             # ShiftRows
             previous_state = state
             state = shift_rows(state)
-            print(f"Block {block_index + 1}: Final Round After ShiftRows (decimal)")
-            print(state)
-            print(f"Block {block_index + 1}: Final Round After ShiftRows (hex)")
-            print([[hex(byte) for byte in row] for row in state])
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: Final Round ShiftRows",
@@ -252,10 +228,7 @@ def aes_encrypt_stepwise(plaintext, key):
             # AddRoundKey
             previous_state = state
             state = add_round_key(state, round_keys[10])
-            print(f"Block {block_index + 1}: Final Round After AddRoundKey (decimal)")
-            print(state)
-            print(f"Block {block_index + 1}: Final Round After AddRoundKey (hex)")
-            print([[hex(byte) for byte in row] for row in state])
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: Final Round AddRoundKey",

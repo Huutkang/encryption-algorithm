@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 TIME_FILE = "start_time.json"
-INPUT_FILE = "Demo Pay for File/index"
 HTML_FILE = "Demo Pay for File/index.html"
 TOTAL_PAYMENT_DURATION = timedelta(days=1)  # Thời gian hết hạn thanh toán
 TOTAL_FILE_DURATION = timedelta(days=3)  # Thời gian hết hạn file
@@ -31,7 +30,7 @@ def update_html_with_time():
     file_deadline = start_time + TOTAL_FILE_DURATION
     payment_time_remaining = payment_deadline - datetime.now()
     file_time_remaining = file_deadline - datetime.now()
-    with open(INPUT_FILE, "r", encoding="utf-8") as f:
+    with open(HTML_FILE, "r", encoding="utf-8") as f:
         html_content = f.read()
 
     # Thay thế thời gian trong HTML
@@ -46,8 +45,7 @@ def update_html_with_time():
     html_content = html_content.replace(
         "'time-left-files', 3 * 24 * 60 * 60", f"'time-left-files', {str(int(file_time_remaining.total_seconds()))}")
 
-    with open(HTML_FILE, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    return html_content
 
 # Route chính hiển thị HTML
 @app.route("/")
@@ -60,12 +58,12 @@ def run_flask():
     app.run(debug=False, port=5000)
 
 if __name__ == "__main__":
-    update_html_with_time()
+    html_content = update_html_with_time()
     # Chạy Flask trong một luồng riêng
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.daemon = True
     flask_thread.start()
 
     # Chạy pywebview
-    webview.create_window("Payment Reminder", "http://127.0.0.1:5000", fullscreen=True)
+    webview.create_window("Payment Reminder", "http://127.0.0.1:5000", html_content, fullscreen=True)
     webview.start()

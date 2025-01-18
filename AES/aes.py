@@ -1,10 +1,10 @@
 from constant import S_BOX, RCON, INV_S_BOX
 
 def to_matrix(data):
-    return [[data[i * 4 + j] for j in range(4)] for i in range(4)]
+    return [[data[i + 4 * j] for j in range(4)] for i in range(4)]
 
 def matrix_to_bytes(matrix):
-    return bytes(sum(matrix, []))
+    return bytes([matrix[row][col] for col in range(4) for row in range(4)])
 
 def sub_bytes(matrix):
     # Thay thế từng byte trong trạng thái bằng giá trị tương ứng từ S_BOX
@@ -40,37 +40,33 @@ def mix_columns(matrix):
     return [list(row) for row in zip(*result)]  # Chuyển cột về hàng
 
 def key_expansion(key, rcon, s_box):
-    num_rounds = 10  # Số vòng AES 128-bit
-    round_keys = [key]  # Danh sách khóa vòng, bắt đầu từ khóa chính
+    num_rounds = 10  # Số vòng cho AES 128-bit
+    round_keys = [key]  # Danh sách lưu các round key (4x4 ma trận)
 
     for round_num in range(1, num_rounds + 1):
-        prev_key = round_keys[-1]
+        prev_key = round_keys[-1]  # Khóa vòng trước đó
 
-        # Lấy cột cuối của khóa trước đó
-        last_column = [prev_key[i][3] for i in range(4)]
+        # Cột đầu tiên của khóa mới
+        last_column = [prev_key[i][3] for i in range(4)]  # Lấy cột cuối
+        rotated_column = last_column[1:] + last_column[:1]  # RotWord
+        sub_column = [
+            s_box[byte >> 4][byte & 0x0F] for byte in rotated_column
+        ]  # SubBytes
 
-        # Thực hiện bước RotWord (dịch vòng lên trên 1 ô)
-        rotated_column = last_column[1:] + last_column[:1]
-
-        # Thực hiện SubBytes trên cột đã xoay
-        sub_column = [s_box[byte >> 4][byte & 0x0F] for byte in rotated_column]
-
-        # XOR với cột đầu của khóa trước đó và RCON
         first_column = [
-            sub_column[i] ^ prev_key[i][0] ^ rcon[round_num - 1][i] for i in range(4)
+            sub_column[i] ^ prev_key[i][0] ^ (rcon[round_num - 1][i] if i == 0 else 0)
+            for i in range(4)
         ]
 
-        # Tạo khóa vòng mới từng cột
+        # Khởi tạo khóa mới
         new_key = [[0] * 4 for _ in range(4)]
         for i in range(4):
-            if i == 0:
-                new_key[i][0] = first_column[i]
-            else:
-                new_key[i][0] = prev_key[i][0] ^ new_key[i - 1][0]
+            new_key[i][0] = first_column[i]
 
-        for j in range(1, 4):
-            for i in range(4):
-                new_key[i][j] = prev_key[i][j] ^ new_key[i][j - 1]
+        # Cột thứ 2, 3, 4
+        for col in range(1, 4):
+            for row in range(4):
+                new_key[row][col] = prev_key[row][col] ^ new_key[row][col - 1]
 
         round_keys.append(new_key)
 
@@ -126,6 +122,7 @@ def aes_encrypt_stepwise(plaintext, key):
         for block_index, block in enumerate(blocks):
             # Chuyển block thành ma trận 4x4
             plaintext_matrix = to_matrix(list(block.encode("utf-8")))
+            
 
             # Lưu trạng thái ban đầu
             visual_steps.append(
@@ -142,6 +139,7 @@ def aes_encrypt_stepwise(plaintext, key):
             # AddRoundKey đầu tiên
             previous_state = state
             state = add_round_key(state, round_keys[0])
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: AddRoundKey (Initial)",
@@ -152,9 +150,11 @@ def aes_encrypt_stepwise(plaintext, key):
 
             # 9 vòng lặp trung gian
             for round_num in range(1, 10):
+                
                 # SubBytes
                 previous_state = state
                 state = sub_bytes(state)
+                
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} SubBytes",
@@ -166,6 +166,7 @@ def aes_encrypt_stepwise(plaintext, key):
                 # ShiftRows
                 previous_state = state
                 state = shift_rows(state)
+                
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} ShiftRows",
@@ -177,6 +178,7 @@ def aes_encrypt_stepwise(plaintext, key):
                 # MixColumns
                 previous_state = state
                 state = mix_columns(state)
+               
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} MixColumns",
@@ -188,6 +190,7 @@ def aes_encrypt_stepwise(plaintext, key):
                 # AddRoundKey
                 previous_state = state
                 state = add_round_key(state, round_keys[round_num])
+                
                 visual_steps.append(
                     (
                         f"Block {block_index + 1}: Round {round_num} AddRoundKey",
@@ -197,9 +200,11 @@ def aes_encrypt_stepwise(plaintext, key):
                 )
 
             # Vòng cuối cùng (không MixColumns)
+            
             # SubBytes
             previous_state = state
             state = sub_bytes(state)
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: Final Round SubBytes",
@@ -211,6 +216,7 @@ def aes_encrypt_stepwise(plaintext, key):
             # ShiftRows
             previous_state = state
             state = shift_rows(state)
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: Final Round ShiftRows",
@@ -222,6 +228,7 @@ def aes_encrypt_stepwise(plaintext, key):
             # AddRoundKey
             previous_state = state
             state = add_round_key(state, round_keys[10])
+            
             visual_steps.append(
                 (
                     f"Block {block_index + 1}: Final Round AddRoundKey",
@@ -239,6 +246,7 @@ def aes_encrypt_stepwise(plaintext, key):
 
         # Trả về ciphertext cuối cùng dưới dạng hex
         return ciphertext.hex(), visual_steps
+
     except Exception as e:
         return f"Error: {e}"
 

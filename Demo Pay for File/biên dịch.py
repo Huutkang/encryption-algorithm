@@ -17,7 +17,7 @@ def compile_cpp(file_path):
     print(f"Đã biên dịch {file_path} thành {file_path_no_ext}.exe!")
 
 # Danh sách các tệp C++ cần biên dịch
-file_paths = [ "Demo Pay for File/decode.cpp"]
+file_paths = [ "Demo Pay for File/encode.cpp", "Demo Pay for File/decode.cpp"]
 
 # Biên dịch từng tệp
 for file_path in file_paths:

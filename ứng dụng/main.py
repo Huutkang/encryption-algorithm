@@ -32,8 +32,8 @@ rsaSignature = RSASignature(False)
 
 # Password
 
-# Nơi ghi mật khẩu đã băm
-hashed_password_file = "ứng dụng/hashed_password.txt"
+## Nơi ghi mật khẩu đã băm
+# hashed_password_file = "ứng dụng/hashed_password.txt"
 
 # # Nhập mật khẩu và băm
 # original_password = "my_secure_password"
